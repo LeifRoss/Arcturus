@@ -6,7 +6,6 @@ int main() {
   unsigned short *layers = new unsigned short[3]{2, 3, 1};
   Cortex::Network *net = new Cortex::Network(layers, 3);
   Cortex::BackpropagationTrainer *trainer = new Cortex::BackpropagationTrainer();
-
   trainer->setNetwork(net);
 
   float **inputSet = new float*[4]{

@@ -2,7 +2,6 @@
 #include "Network.h"
 #include <cstddef>
 #include <math.h>
-#include <iostream>
 
 /**
 * @file BackpropagationTrainer.cpp
@@ -54,11 +53,11 @@ namespace Cortex {
   }
 
   float BackpropagationTrainer::train(float **input, float **desired, unsigned short length) {
-    unsigned short i = 0, j = 0, attempts = 10;
+    unsigned short i = 0, j = 0, attempts = 1;
     float threshold = 0.1f;
     float score = 0.0f;
 
-    for(unsigned short k = 0; k < 1; k++) {
+    for(unsigned short k = 0; k < 1000; k++) {
       // run through the sets
       for(; i < length; i++) {
         float *inputSet = input[i];
@@ -124,11 +123,9 @@ namespace Cortex {
     unsigned short *layers = this->network->getStructure();
     unsigned short nextLayerSize = layers[layerIndex + 1];
 
-
     for(unsigned short i = 0; i < nextLayerSize; i++) {
       float error = this->errors[layerIndex + 1][i];
       float weight = this->network->getSynapse(layerIndex, neuronIndex, i);
-      //std::cout << "Error: " << error << " Weight: " << weight << std::endl;
       recurrent = recurrent * weight * error;
     }
 
@@ -140,7 +137,7 @@ namespace Cortex {
     unsigned short* structure = this->network->getStructure();
     unsigned short i = 0, j = 0, k = 0, size = 0, nextSize = structure[0];
     float* error;
-    float weight = 0.0f, rate = 0.25, value = 0.0f;
+    float weight = 0.0f, rate = 0.1f, value = 0.0f;
 
     for(; i < len; i++) {
       size = nextSize;
@@ -159,17 +156,16 @@ namespace Cortex {
   void BackpropagationTrainer::adjustBiasWeights() {
     unsigned short depth = this->network->getDepth();
     unsigned short* structure = this->network->getStructure();
-    unsigned short i = 1, j = 0;
-    float rate = 0.25f;
+    unsigned short i = 1, j = 0, size = structure[0];
+    float rate = 0.1f;
 
     for(; i < depth; i++) {
-      unsigned short size = structure[i];
+      unsigned short prevLayerSize = size;
+      size = structure[i];
       for(j = 0; j < size; j++) {
         float error = this->errors[i][j];
-        float weight = this->network->getSynapse(i-1, size, j);
-        this->network->setSynapse(i-1, size, j, weight + (rate * error));
-        //TODO HERE, incorret synapse thing
-        //std::cout << "nval: " << weight << std::endl;
+        float weight = this->network->getSynapse(i-1, prevLayerSize, j);
+        this->network->setSynapse(i-1, prevLayerSize, j, weight + (rate * error));
       }
     }
   }
@@ -183,7 +179,7 @@ namespace Cortex {
       delta += (d * d);
     }
 
-    return sqrt(delta);
+    return std::sqrt(delta);
   }
 
 }

@@ -1,13 +1,12 @@
 #include "Network.h"
 #include <math.h>
-#include <iostream>
 
 /**
 * @file Network.cpp
 * @author Leif Andreas Rudlang
 * @version 0.0.1
 * @date February, 2017
-* @brief Feed-forward artificial neural network
+* @brief High-performance Feed-forward artificial neural network
 */
 namespace Cortex {
 
@@ -108,7 +107,6 @@ namespace Cortex {
 
   float Network::getSynapse(unsigned short layer, unsigned short output, unsigned short input) {
     short stride = this->structure[layer] + 1;
-    //std::cout << "Layer: " << layer << " Index: " << output + stride * input << std::endl;
     return this->weightMatrice[layer][output + stride * input];
   }
 

@@ -12,3 +12,4 @@ build/**
 .ninja_log
 build.ninja
 rules.ninja
+Arcturus.exe

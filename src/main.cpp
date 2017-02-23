@@ -9,17 +9,17 @@ int main() {
   trainer->setNetwork(net);
 
   float **inputSet = new float*[4]{
-    new float[2]{0.0f, 0.0f},
-    new float[2]{0.0f, 1.0f},
+    new float[2]{1.0f, 1.0f},
+    new float[2]{1.0f, 1.0f},
     new float[2]{1.0f, 0.0f},
-    new float[2]{1.0f, 1.0f}
+    new float[2]{0.0f, 1.0f}
   };
 
   float **desiredSet = new float*[4]{
     new float[1]{0.0f},
+    new float[1]{0.0f},
     new float[1]{1.0f},
-    new float[1]{1.0f},
-    new float[1]{0.0f}
+    new float[1]{1.0f}
   };
 
   trainer->train(inputSet, desiredSet, 4);

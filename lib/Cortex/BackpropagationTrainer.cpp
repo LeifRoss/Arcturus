@@ -2,6 +2,7 @@
 #include "Network.h"
 #include <cstddef>
 #include <math.h>
+#include <iostream>
 
 /**
 * @file BackpropagationTrainer.cpp
@@ -53,13 +54,13 @@ namespace Cortex {
   }
 
   float BackpropagationTrainer::train(float **input, float **desired, unsigned short length) {
-    unsigned short i = 0, j = 0, attempts = 1;
+    unsigned short i = 0, j = 0, attempts = 10;
     float threshold = 0.1f;
     float score = 0.0f;
 
     for(unsigned short k = 0; k < 1000; k++) {
       // run through the sets
-      for(; i < length; i++) {
+      for(i = 0; i < length; i++) {
         float *inputSet = input[i];
         float *desiredSet = desired[i];
 
@@ -68,7 +69,7 @@ namespace Cortex {
           this->run(inputSet, desiredSet);
           float setScore = this->score(desiredSet);
           if(setScore < threshold) {
-            //break;
+            break;
           }
         }
       }
@@ -137,7 +138,7 @@ namespace Cortex {
     unsigned short* structure = this->network->getStructure();
     unsigned short i = 0, j = 0, k = 0, size = 0, nextSize = structure[0];
     float* error;
-    float weight = 0.0f, rate = 0.1f, value = 0.0f;
+    float weight = 0.0f, rate = 0.5f, value = 0.0f;
 
     for(; i < len; i++) {
       size = nextSize;
@@ -157,7 +158,7 @@ namespace Cortex {
     unsigned short depth = this->network->getDepth();
     unsigned short* structure = this->network->getStructure();
     unsigned short i = 1, j = 0, size = structure[0];
-    float rate = 0.1f;
+    float rate = 0.5f;
 
     for(; i < depth; i++) {
       unsigned short prevLayerSize = size;
@@ -166,6 +167,7 @@ namespace Cortex {
         float error = this->errors[i][j];
         float weight = this->network->getSynapse(i-1, prevLayerSize, j);
         this->network->setSynapse(i-1, prevLayerSize, j, weight + (rate * error));
+
       }
     }
   }

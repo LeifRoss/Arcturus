@@ -78,7 +78,17 @@ namespace Cortex {
       sum += prevLayer[i] * this->getSynapse(prevLayerIndex, i, neuron);
     }
 
+    //return this->hyperbolicTangent(sum);
     return this->sigmoid(sum);
+  }
+
+  float Network::fTanh(float value) {
+
+    return 0.0f;
+  }
+
+  float Network::hyperbolicTangent(float sum) {
+    return 1.7159f * this->fTanh(0.6666f * sum); // TODO
   }
 
   float Network::sigmoid(float sum) {

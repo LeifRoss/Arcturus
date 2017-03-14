@@ -1,14 +1,21 @@
-cmake_minimum_required (VERSION 2.8.0)
-project (Arcturus)
+cmake_minimum_required(VERSION 2.8)
+project (addon)
 
-set (Arcturus_MAJOR_VERSION 1)
-set (Arcturus_MINOR_VERSION 0)
+# Essential node addon include files
+include_directories(${CMAKE_JS_INC})
 
+# Include Cortex Library
 add_subdirectory (lib/Cortex)
 include_directories (lib/Cortex)
 
-add_executable (Arcturus src/main.cpp)
+# Location of addon.cpp
+file(GLOB SOURCE_FILES "src/addon.cpp" "src/addon.h")
 
-target_link_libraries (Arcturus Cortex)
+# This line will tell CMake that we're building a shared library
+add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES})
 
-install (TARGETS Arcturus DESTINATION bin)
+# This line will give our library file a .node extension without any "lib" prefix
+set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "" SUFFIX ".node")
+
+target_link_libraries (${PROJECT_NAME} Cortex)
+target_link_libraries(${PROJECT_NAME} ${CMAKE_JS_LIB})

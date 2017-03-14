@@ -13,3 +13,5 @@ build/**
 build.ninja
 rules.ninja
 Arcturus.exe
+node_modules/
+npm-debug.log

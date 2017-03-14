@@ -1,0 +1,12 @@
+{
+  "name": "Arcturus",
+  "version": "0.0.1",
+  "description": "Native machine learning module",
+  "scripts": {
+    "install": "cmake-js compile"
+  },
+  "dependencies": {
+    "cmake-js": "^3.4.1",
+    "nan": "^2.5.1"
+  }
+}

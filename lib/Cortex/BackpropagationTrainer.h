@@ -10,7 +10,7 @@ namespace Cortex {
   ~BackpropagationTrainer();
   void setNetwork(Network *network);
   float train(float **input, float **desired, unsigned short length);
-  void run(float *input, float *desiredOutput);
+  void run(float *input, float *desiredOutput, float rate);
   void clear();
   float score(float *desired);
   private:
@@ -20,8 +20,8 @@ namespace Cortex {
   void calculateOutputError(float *desiredOutput);
   void calculateRecurrentErrorLayer(unsigned short layerIndex);
   void calculateRecurrentErrorNeuron(unsigned short layerIndex, unsigned short neuronIndex);
-  void adjustWeights();
-  void adjustBiasWeights();
+  void adjustWeights(float rate);
+  void adjustBiasWeights(float rate);
   };
 }
 

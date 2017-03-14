@@ -22,10 +22,8 @@ namespace Cortex {
     float **valueMatrice;
     float **weightMatrice;
     float runNeuron(unsigned short layer, unsigned short neuron);
-    float sigmoid(float sum);
     float hyperbolicTangent(float sum);
     float fTanh(float value);
-    float inverseSigmoid(float sum);
   };
 }
 

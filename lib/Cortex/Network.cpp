@@ -1,5 +1,6 @@
 #include "Network.h"
 #include <math.h>
+#include <iostream>
 
 /**
 * @file Network.cpp
@@ -43,13 +44,17 @@ namespace Cortex {
     delete[] this->weightMatrice;
   }
 
+  /**
+  * Initialize the synaptic weights
+  * @TODO method to initialize the weights using a "seed"
+  */
   void Network::identity() {
     unsigned short i = 0, j = 0, len = this->depth - 1;
     for(; i < len; i++) {
       float *weights = this->weightMatrice[i];
       unsigned short layerSize = (this->structure[i] + 1) * this->structure[i + 1];
       for(j = 0; j < layerSize; j++) {
-        weights[j] = 1.0f;
+        weights[j] = 0.5f; // TODO, need function to "Seed" weights, can this be used by calculating complexity?
       }
     }
   }
@@ -78,25 +83,19 @@ namespace Cortex {
       sum += prevLayer[i] * this->getSynapse(prevLayerIndex, i, neuron);
     }
 
-    //return this->hyperbolicTangent(sum);
-    return this->sigmoid(sum);
+    return this->hyperbolicTangent(sum);
   }
 
-  float Network::fTanh(float value) {
-
-    return 0.0f;
+  float Network::fTanh(float x) {
+    float x2 = x * x;
+    float a = x * (135135.0f + x2 * (17325.0f + x2 * (378.0f + x2)));
+    float b = 135135.0f + x2 * (62370.0f + x2 * (3150.0f + x2 * 28.0f));
+    float r = a / b;
+    return r > 1.0f ? 1.0f : r < -1.0f ? -1.0f : r;
   }
 
   float Network::hyperbolicTangent(float sum) {
-    return 1.7159f * this->fTanh(0.6666f * sum); // TODO
-  }
-
-  float Network::sigmoid(float sum) {
-    return 1.0f / (1.0f + std::exp(-sum));
-  }
-
-  float Network::inverseSigmoid(float sum) {
-    return -std::log((1.0f - sum) / sum);
+    return this->fTanh(sum);
   }
 
   unsigned short* Network::getStructure() {

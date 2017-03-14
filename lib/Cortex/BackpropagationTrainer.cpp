@@ -54,36 +54,44 @@ namespace Cortex {
   }
 
   float BackpropagationTrainer::train(float **input, float **desired, unsigned short length) {
-    unsigned short i = 0, j = 0, attempts = 10;
-    float threshold = 0.1f;
+    unsigned short i = 0, j = 0, attempts = 1;
+    float threshold = 0.05f;
     float score = 0.0f;
+    float rate = 0.25f;
+    int iterations = 0;
 
-    for(unsigned short k = 0; k < 1000; k++) {
+    for(unsigned short k = 0; k < 2000; k++) {
       // run through the sets
+      score = 0.0f;
       for(i = 0; i < length; i++) {
         float *inputSet = input[i];
         float *desiredSet = desired[i];
+        this->run(inputSet, desiredSet, rate);
+        score += this->score(desiredSet);
+        iterations++;
+      }
 
-        // run through a set
-        for(j = 0; j < attempts; j++) {
-          this->run(inputSet, desiredSet);
-          float setScore = this->score(desiredSet);
-          if(setScore < threshold) {
-            break;
-          }
-        }
+      score = std::sqrt(score);
+      if(iterations % 100 == 0.0f) {
+        //rate = 1.0f - (1000.0f / i) / (1000.0f); if score is not getting lower in X iterations, its time to quit
+        //std::cout << score << std::endl;
+      }
+      if(score < threshold) {
+        break;
       }
     }
 
+    std::cout << "total iterations: " << iterations << std::endl;
     return 0.0f;
   }
 
-  void BackpropagationTrainer::run(float *input, float *desired) {
+  void BackpropagationTrainer::run(float *input, float *desired, float rate) {
     unsigned short depth = network->getDepth();
     unsigned short *structure = network->getStructure();
 
     // Run through the network
     this->network->run(input, this->output);
+
     // Calculate difference between output and the desired output
     this->calculateOutputError(desired);
 
@@ -93,10 +101,10 @@ namespace Cortex {
     }
 
     // Adjust Synaptic weights
-    this->adjustWeights();
+    this->adjustWeights(rate);
 
     // Adjust Synaptic bias weights
-    this->adjustBiasWeights();
+    this->adjustBiasWeights(rate);
   }
 
   void BackpropagationTrainer::calculateOutputError(float *desired) {
@@ -133,12 +141,12 @@ namespace Cortex {
     this->errors[layerIndex][neuronIndex] = recurrent * value * (1.0f - value);
   }
 
-  void BackpropagationTrainer::adjustWeights() {
+  void BackpropagationTrainer::adjustWeights(float rate) {
     unsigned short len = this->network->getDepth() - 1;
     unsigned short* structure = this->network->getStructure();
     unsigned short i = 0, j = 0, k = 0, size = 0, nextSize = structure[0];
     float* error;
-    float weight = 0.0f, rate = 0.5f, value = 0.0f;
+    float weight = 0.0f, value = 0.0f;
 
     for(; i < len; i++) {
       size = nextSize;
@@ -154,11 +162,10 @@ namespace Cortex {
     }
   }
 
-  void BackpropagationTrainer::adjustBiasWeights() {
+  void BackpropagationTrainer::adjustBiasWeights(float rate) {
     unsigned short depth = this->network->getDepth();
     unsigned short* structure = this->network->getStructure();
     unsigned short i = 1, j = 0, size = structure[0];
-    float rate = 0.5f;
 
     for(; i < depth; i++) {
       unsigned short prevLayerSize = size;
@@ -181,7 +188,8 @@ namespace Cortex {
       delta += (d * d);
     }
 
-    return std::sqrt(delta);
+    return delta;
+    //return std::sqrt(delta);
   }
 
 }
